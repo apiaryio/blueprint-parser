@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Apiary Blueprint Parser Test Suite</title>
+    <link rel="stylesheet" href="vendor/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <script src="vendor/mocha/mocha.js"></script>
+    <script src="vendor/chai/chai.js"></script>
+    <script src="vendor/coffee-script/coffee-script.js"></script>
+
+    <script src="../dist/apiary-blueprint-parser.js"></script>
+
+    <script>mocha.setup("bdd");</script>
+    <script>
+      /*
+       * The following test loading hackery is needed because with <script
+       * type="text/coffeescript"> it is hard to guarantee that |mocha.run| is
+       * executed after all tests are loaded.
+       */
+      var tests = [
+            "apiary-blueprint-parser-test.coffee",
+            "ast-test.coffee"
+          ],
+          n = 0, i;
+
+      function callback() {
+        n++;
+
+        if (n === tests.length) {
+          mocha.run();
+        }
+      }
+
+      for (i = 0; i < tests.length; i++) {
+        CoffeeScript.load(tests[i], callback);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name":            "apiary-blueprint-parser",
+  "version":         "0.1.0",
+  "description":     "Apiary blueprint parser",
+  "homepage":        "http://apiary.io/",
+  "author":          {
+    "name":  "Apiary Ltd.",
+    "email": "team@apiary.io",
+    "url":   "http://apiary.io/"
+  },
+  "files":           [
+    "LICENSE",
+    "README.md",
+    "VERSION",
+    "examples/example.apib",
+    "lib/apiary-blueprint-parser.js",
+    "lib/ast.js"
+  ],
+  "main":            "lib/apiary-blueprint-parser",
+  "devDependencies": {
+    "coffee-script": "*",
+    "pegjs":         "= 0.7.0",
+    "mocha":         "*",
+    "chai":          "*"
+  },
+  "engines":         {
+    "node": ">= 0.6.18"
+  }
+}

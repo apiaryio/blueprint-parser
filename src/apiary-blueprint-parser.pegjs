@@ -325,13 +325,10 @@ Out
 /* ===== Helper Rules ===== */
 
 Text0 "zero or more characters"
-  = chars:NonEOL* { return chars.join(""); }
+  = chars:[^\n\r]* { return chars.join(""); }
 
 Text1 "one or more characters"
-  = chars:NonEOL+ { return chars.join(""); }
-
-NonEOL "line character"
-  = !EOL char:. { return char; }
+  = chars:[^\n\r]+ { return chars.join(""); }
 
 EmptyLine "empty line"
   = S* EOL

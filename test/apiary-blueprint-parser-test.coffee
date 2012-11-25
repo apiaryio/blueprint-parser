@@ -1125,10 +1125,6 @@ describe "Apiary blueprint parser", ->
     assert.parse "--- a",   new Blueprint name: "a"
     assert.parse "--- abc", new Blueprint name: "abc"
 
-  # Canonical NonEOL is "a".
-  it "parses NonEOL", ->
-    assert.parse "--- a", new Blueprint name: "a"
-
   # Canonical EmptyLine is "\n".
   it "parses EmptyLine", ->
     assert.parse "\n--- abcd",    new Blueprint name: "abcd"

@@ -1,0 +1,15 @@
+0.2.0 (2012-?-?)
+----------------
+
+* Improved performance by 70-80%.
+* Fixed project metadata (homepage, copyright).
+
+0.1.1 (2012-11-14)
+------------------
+
+* Fixed a badly published npm package.
+
+0.1.0 (2012-11-12)
+------------------
+
+* Initial release.

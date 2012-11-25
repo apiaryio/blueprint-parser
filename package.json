@@ -9,6 +9,7 @@
     "url":   "http://apiary.io/"
   },
   "files":           [
+    "CHANGELOG",
     "LICENSE",
     "README.md",
     "VERSION",

@@ -2,7 +2,7 @@
   "name":            "apiary-blueprint-parser",
   "version":         "0.1.1",
   "description":     "Apiary blueprint parser",
-  "homepage":        "http://apiary.io/",
+  "homepage":        "https://github.com/apiaryio/blueprint-parser",
   "author":          {
     "name":  "Apiary Ltd.",
     "email": "team@apiary.io",

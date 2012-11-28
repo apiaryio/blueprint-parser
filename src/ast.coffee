@@ -24,6 +24,14 @@ escapeBody = (body) ->
 
 # Represents an Apiary blueprint.
 class Blueprint
+  @fromJSON: (json) ->
+    new this
+      location:    json.location
+      name:        json.name
+      description: json.description
+      sections:    Section.fromJSON(s) for s in json.sections
+      validations: JsonSchemaValidation.fromJSON(v) for v in json.validations
+
   constructor: (props = {}) ->
     fillProps this, props,
       location:    null
@@ -60,6 +68,12 @@ class Blueprint
 
 # Represents a section of an Apiary blueprint.
 class Section
+  @fromJSON: (json) ->
+    new this
+      name:        json.name
+      description: json.description
+      resources:   Resource.fromJSON(r) for r in json.resources
+
   constructor: (props = {}) ->
     fillProps this, props,
       name:        null
@@ -83,6 +97,14 @@ class Section
 
 # Represents a resource of an Apiary blueprint.
 class Resource
+  @fromJSON: (json) ->
+    new this
+      description: json.description
+      method:      json.method
+      url:         json.url
+      request:     Request.fromJSON(json.request)
+      responses:   Response.fromJSON(r) for r in json.responses
+
   constructor: (props = {}) ->
     fillProps this, props,
       description: null
@@ -114,6 +136,11 @@ class Resource
 
 # Represents a request of a resource.
 class Request
+  @fromJSON: (json) ->
+    new this
+      headers: json.headers
+      body:    json.body
+
   constructor: (props = {}) ->
     fillProps this, props,
       headers: {},
@@ -130,6 +157,12 @@ class Request
 
 # Represents a response of a resource.
 class Response
+  @fromJSON: (json) ->
+    new this
+      status:  json.status
+      headers: json.headers
+      body:    json.body
+
   constructor: (props = {}) ->
     fillProps this, props,
       status:  200,
@@ -149,6 +182,12 @@ class Response
 
 # Represents a JSON schema validation.
 class JsonSchemaValidation
+  @fromJSON: (json) ->
+    new this
+      method: json.method
+      url:    json.url
+      body:   json.body
+
   constructor: (props = {}) ->
     fillProps this, props,
       method: "GET",

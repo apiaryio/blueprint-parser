@@ -356,6 +356,10 @@ bodyTestcases = [
 describe "Blueprint", ->
   emptyBlueprint = new Blueprint
 
+  describe ".fromJSON", ->
+    it "creates a new blueprint from a JSON-serializable object", ->
+      assert.deepEqual Blueprint.fromJSON(filledBlueprintJson), filledBlueprint
+
   describe "#constructor", ->
     describe "when passed property values", ->
       it "initializes properties correctly", ->
@@ -409,6 +413,10 @@ describe "Blueprint", ->
 
 describe "Section", ->
   emptySection = new Section
+
+  describe ".fromJSON", ->
+    it "creates a new section from a JSON-serializable object", ->
+      assert.deepEqual Section.fromJSON(filledSectionJsons[0]), filledSections[0]
 
   describe "#constructor", ->
     describe "when passed property values", ->
@@ -466,6 +474,10 @@ describe "Section", ->
 describe "Resource", ->
   emptyResource = new Resource
 
+  describe ".fromJSON", ->
+    it "creates a new resource from a JSON-serializable object", ->
+      assert.deepEqual Resource.fromJSON(filledResourceJsons[0]), filledResources[0]
+
   describe "#constructor", ->
     describe "when passed property values", ->
       it "initializes properties correctly", ->
@@ -508,6 +520,10 @@ describe "Resource", ->
 describe "Request", ->
   emptyRequest = new Request
 
+  describe ".fromJSON", ->
+    it "creates a new request from a JSON-serializable object", ->
+      assert.deepEqual Request.fromJSON(filledRequestJson), filledRequest
+
   describe "#constructor", ->
     describe "when passed property values", ->
       it "initializes properties correctly", ->
@@ -548,6 +564,10 @@ describe "Request", ->
 
 describe "Response", ->
   emptyResponse = new Response
+
+  describe ".fromJSON", ->
+    it "creates a new response from a JSON-serializable object", ->
+      assert.deepEqual Response.fromJSON(filledResponseJsons[0]), filledResponses[0]
 
   describe "#constructor", ->
     describe "when passed property values", ->
@@ -593,6 +613,10 @@ describe "Response", ->
 
 describe "JsonSchemaValidation", ->
   emptyValidation = new JsonSchemaValidation
+
+  describe ".fromJSON", ->
+    it "creates a new validation from a JSON-serializable object", ->
+      assert.deepEqual JsonSchemaValidation.fromJSON(filledValidationJsons[0]), filledValidations[0]
 
   describe "#constructor", ->
     describe "when passed property values", ->

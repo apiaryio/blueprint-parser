@@ -118,7 +118,7 @@ class Resource
   toJSON: ->
     description: @description or ""
     method:      @method
-    url:         @url,
+    url:         @url
     request:     @request.toJSON()
     responses:   r.toJSON() for r in @responses
 

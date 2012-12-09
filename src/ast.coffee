@@ -49,9 +49,9 @@ class Blueprint
     return resources
 
   toJSON: ->
-    location:    @location or ""
-    name:        @name or ""
-    description: @description or ""
+    location:    @location
+    name:        @name
+    description: @description
     sections:    s.toJSON() for s in @sections
     validations: v.toJSON() for v in @validations
 
@@ -81,8 +81,8 @@ class Section
       resources:   []
 
   toJSON: ->
-    name:        @name or ""
-    description: @description or ""
+    name:        @name
+    description: @description
     resources:   r.toJSON() for r in @resources
 
   toBlueprint: ->
@@ -116,7 +116,7 @@ class Resource
   getUrlFragment: -> "#{@method.toLowerCase()}-#{encodeURIComponent @url}"
 
   toJSON: ->
-    description: @description or ""
+    description: @description
     method:      @method
     url:         @url
     request:     @request.toJSON()
@@ -148,7 +148,7 @@ class Request
 
   toJSON: ->
     headers: @headers
-    body:    @body or ""
+    body:    @body
 
   toBlueprint: ->
     combineParts "\n", (parts) =>
@@ -172,7 +172,7 @@ class Response
   toJSON: ->
     status:  @status
     headers: @headers
-    body:    @body ? ""
+    body:    @body
 
   toBlueprint: ->
     combineParts "\n", (parts) =>
@@ -197,7 +197,7 @@ class JsonSchemaValidation
   toJSON: ->
     method: @method
     url:    @url
-    body:   @body or ""
+    body:   @body
 
   toBlueprint: ->
     combineParts "\n", (parts) =>

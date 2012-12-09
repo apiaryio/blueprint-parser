@@ -384,24 +384,6 @@ describe "Blueprint", ->
       it "returns a correct JSON-serializable object", ->
         assert.deepEqual filledBlueprint.toJSON(), filledBlueprintJson
 
-    describe "on a blueprint with no location", ->
-      it "uses \"\" as the location value", ->
-        blueprint = new Blueprint location: null
-
-        assert.deepEqual blueprint.toJSON().location, ""
-
-    describe "on a blueprint with no name", ->
-      it "uses \"\" as the name value", ->
-        blueprint = new Blueprint name: null
-
-        assert.deepEqual blueprint.toJSON().name, ""
-
-    describe "on a blueprint with no description", ->
-      it "uses \"\" as the description value", ->
-        blueprint = new Blueprint description: null
-
-        assert.deepEqual blueprint.toJSON().description, ""
-
   describe "#toBlueprint", ->
     describe "on an empty blueprint", ->
       it "returns a correct blueprint", ->
@@ -437,18 +419,6 @@ describe "Section", ->
     describe "on a filled-in section", ->
       it "returns a correct JSON-serializable object", ->
         assert.deepEqual filledSections[0].toJSON(), filledSectionJsons[0]
-
-    describe "on a section with no name", ->
-      it "uses \"\" as the name value", ->
-        section = new Section name: null
-
-        assert.deepEqual section.toJSON().name, ""
-
-    describe "on a section with no description", ->
-      it "uses \"\" as the description value", ->
-        section = new Section description: null
-
-        assert.deepEqual section.toJSON().description, ""
 
   describe "#toBlueprint", ->
     describe "on an empty section", ->
@@ -502,12 +472,6 @@ describe "Resource", ->
       it "returns a correct JSON-serializable object", ->
         assert.deepEqual filledResources[0].toJSON(), filledResourceJsons[0]
 
-    describe "on a resource with no description", ->
-      it "uses \"\" as the description value", ->
-        resource = new Resource description: null
-
-        assert.deepEqual resource.toJSON().description, ""
-
   describe "#toBlueprint", ->
     describe "on an empty resource", ->
       it "returns a correct blueprint", ->
@@ -539,12 +503,6 @@ describe "Request", ->
     describe "on a filled-in request", ->
       it "returns a correct JSON-serializable object", ->
         assert.deepEqual filledRequest.toJSON(), filledRequestJson
-
-    describe "on a request with no body", ->
-      it "uses \"\" as the body value", ->
-        request = new Request body: null
-
-        assert.deepEqual request.toJSON().body, ""
 
   describe "#toBlueprint", ->
     describe "on an empty request", ->
@@ -589,12 +547,6 @@ describe "Response", ->
       it "returns a correct JSON-serializable object", ->
         assert.deepEqual filledResponses[0].toJSON(), filledResponseJsons[0]
 
-    describe "on a response with no body", ->
-      it "uses \"\" as the body value", ->
-        response = new Response body: null
-
-        assert.deepEqual response.toJSON().body, ""
-
   describe "#toBlueprint", ->
     describe "on an empty response", ->
       it "returns a correct blueprint", ->
@@ -637,12 +589,6 @@ describe "JsonSchemaValidation", ->
     describe "on a filled-in validation", ->
       it "returns a correct JSON-serializable object", ->
         assert.deepEqual filledValidations[0].toJSON(), filledValidationJsons[0]
-
-    describe "on a validation with no body", ->
-      it "uses \"\" as the body value", ->
-        validation = new JsonSchemaValidation body: null
-
-        assert.deepEqual validation.toJSON().body, ""
 
   describe "#toBlueprint", ->
     describe "on an empty validation", ->

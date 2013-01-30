@@ -46,7 +46,7 @@
       Response             = this.ast.Response,
       JsonSchemaValidation = this.ast.JsonSchemaValidation;
 
-  var bodyTerminator;
+  var urlPrefix = "", bodyTerminator;
 }
 
 /* ===== Primary Rules ===== */
@@ -85,7 +85,16 @@ API
     }
 
 Location
-  = "HOST:" S* url:Text0 EOLF { return url; }
+  = "HOST:" S* url:Text0 EOLF {
+      var urlWithoutProtocol = url.replace(/^https?:\/\//, ""),
+          slashIndex         = urlWithoutProtocol.indexOf("/");
+
+      if (slashIndex > 0) {
+        urlPrefix = urlWithoutProtocol.slice(slashIndex + 1);
+      }
+
+      return url;
+    }
 
 APIName
   = "---" S+ name:Text1 EOLF {
@@ -158,10 +167,14 @@ Resource
     request:Request
     responses:Responses
     {
+      var url = urlPrefix !== ""
+        ? "/" + urlPrefix.replace(/\/$/, "") + "/" + signature.url.replace(/^\//, "")
+        : signature.url;
+
       return new Resource({
         description: nullIfEmpty(description),
         method:      signature.method,
-        url:         signature.url,
+        url:         url,
         request:     request,
         responses:   responses
       });

@@ -498,6 +498,90 @@ describe "Apiary blueprint parser", ->
       request:     request,
       responses:   responses
 
+    assert.parse """
+      HOST: http://example.com
+
+      GET url
+      < 200
+
+      GET /
+      < 200
+
+      GET /url
+      < 200
+    """, new Blueprint
+      location:    "http://example.com"
+      sections:    [
+        new Section resources: [
+          new Resource url: "url"
+          new Resource url: "/"
+          new Resource url: "/url"
+        ]
+      ]
+
+    assert.parse """
+      HOST: http://example.com/
+
+      GET url
+      < 200
+
+      GET /
+      < 200
+
+      GET /url
+      < 200
+    """, new Blueprint
+      location:    "http://example.com/"
+      sections:    [
+        new Section resources: [
+          new Resource url: "url"
+          new Resource url: "/"
+          new Resource url: "/url"
+        ]
+      ]
+
+    assert.parse """
+      HOST: http://example.com/path
+
+      GET url
+      < 200
+
+      GET /
+      < 200
+
+      GET /url
+      < 200
+    """, new Blueprint
+      location:    "http://example.com/path"
+      sections:    [
+        new Section resources: [
+          new Resource url: "/path/url"
+          new Resource url: "/path/"
+          new Resource url: "/path/url"
+        ]
+      ]
+
+    assert.parse """
+      HOST: http://example.com/path/
+
+      GET url
+      < 200
+
+      GET /
+      < 200
+
+      GET /url
+      < 200
+    """, new Blueprint
+      location:    "http://example.com/path/"
+      sections:    [
+        new Section resources: [
+          new Resource url: "/path/url"
+          new Resource url: "/path/"
+          new Resource url: "/path/url"
+        ]
+      ]
+
   # Canonical ResourceDescription is "Root resource".
   it "parses ResourceDescription", ->
     assert.parse """

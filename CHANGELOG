@@ -1,3 +1,9 @@
+0.4.1 (2013-01-30)
+------------------
+
+* Path prefix from "HOST:" is now added to Resource.url. This fixes a regression
+  against the old non-PEG.js parser.
+
 0.4.0 (2013-01-10)
 ------------------
 

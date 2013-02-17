@@ -44,7 +44,9 @@ Response             = parser.ast.Response
 JsonSchemaValidation = parser.ast.JsonSchemaValidation
 
 sectionBlueprint = (props = {}) ->
-  new Blueprint sections: [new Section(props)]
+  new Blueprint
+    name:     "API"
+    sections: [new Section(props)]
 
 resourceBlueprint = (props = {}) ->
   sectionBlueprint resources: [new Resource(props)]
@@ -169,9 +171,23 @@ describe "Apiary blueprint parser", ->
 
   # Canonical Location is "HOST: http://example.com/".
   it "parses Location", ->
-    assert.parse "HOST:abcd",    new Blueprint location: "abcd"
-    assert.parse "HOST: abcd",   new Blueprint location: "abcd"
-    assert.parse "HOST:   abcd", new Blueprint location: "abcd"
+    assert.parse """
+      HOST:abcd
+
+      --- API ---
+    """, new Blueprint location: "abcd", name: "API"
+
+    assert.parse """
+      HOST: abcd
+
+      --- API ---
+    """, new Blueprint location: "abcd", name: "API"
+
+    assert.parse """
+      HOST:   abcd
+
+      --- API ---
+    """, new Blueprint location: "abcd", name: "API"
 
   # Canonical APIName is "--- API ---".
   it "parses APIName", ->
@@ -188,49 +204,75 @@ describe "Apiary blueprint parser", ->
   #
   it "parses APIDescription", ->
     assert.parse """
+      --- API ---
+
       ---
       ---
-    """, new Blueprint description: null
+    """, new Blueprint name: "API", description: null
 
     assert.parse """
+      --- API ---
+
       --- 
       ---
-    """, new Blueprint description: null
+    """, new Blueprint name: "API", description: null
 
     assert.parse """
+      --- API ---
+
       ---  
       ---
-    """, new Blueprint description: null
+    """, new Blueprint name: "API", description: null
 
     assert.parse """
+      --- API ---
+
       ---
       abcd
       ---
-    """, new Blueprint description: "abcd"
+    """, new Blueprint name: "API", description: "abcd"
 
     assert.parse """
+      --- API ---
+
       ---
       abcd
       efgh
       ijkl
       ---
-    """, new Blueprint description: "abcd\nefgh\nijkl"
+    """, new Blueprint name: "API", description: "abcd\nefgh\nijkl"
 
     assert.parse """
+      --- API ---
+
       ---
       --- 
-    """, new Blueprint description: null
+    """, new Blueprint name: "API", description: null
 
     assert.parse """
+      --- API ---
+
       ---
       ---   
-    """, new Blueprint description: null
+    """, new Blueprint name: "API", description: null
 
   # Canonical APIDescriptionLine is "abcd".
   it "parses APIDescriptionLine", ->
-    assert.parse "---\nabcd\n---", new Blueprint description: "abcd"
+    assert.parse """
+      --- API ---
 
-    assert.notParse "---\n---\n---"
+      ---
+      abcd
+      ---
+    """, new Blueprint name: "API", description: "abcd"
+
+    assert.notParse """
+      --- API ---
+
+      ---
+      ---
+      ---
+    """
 
   # Canonical Sections is:
   #
@@ -239,25 +281,44 @@ describe "Apiary blueprint parser", ->
   #   -- Section 3 --
   #
   it "parses Sections", ->
-    blueprint0 = new Blueprint sections: []
-    blueprint1 = new Blueprint sections: [new Section name: "Section 1"]
+    blueprint0 = new Blueprint
+      name: "API"
+      sections: []
+
+    blueprint1 = new Blueprint
+      name:     "API"
+      sections: [new Section name: "Section 1"]
+
     blueprint3 = new Blueprint
+      name:     "API"
       sections: [
         new Section name: "Section 1"
         new Section name: "Section 2"
         new Section name: "Section 3"
       ]
 
-    assert.parse "",                blueprint0
-    assert.parse "-- Section 1 --", blueprint1
+    assert.parse """
+      --- API ---
+
+    """, blueprint0
 
     assert.parse """
+      --- API ---
+
+      -- Section 1 --
+    """, blueprint1
+
+    assert.parse """
+      --- API ---
+
       -- Section 1 --
       -- Section 2 --
       -- Section 3 --
     """, blueprint3
 
     assert.parse """
+      --- API ---
+
       -- Section 1 --
 
       -- Section 2 --
@@ -266,6 +327,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint3
 
     assert.parse """
+      --- API ---
+
       -- Section 1 --
 
 
@@ -288,6 +351,8 @@ describe "Apiary blueprint parser", ->
       ]
 
     assert.parse """
+      --- API ---
+
       -- Section --
       GET /one
       < 200
@@ -300,6 +365,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       -- Section --
 
       GET /one
@@ -313,6 +380,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       -- Section --
 
 
@@ -329,15 +398,43 @@ describe "Apiary blueprint parser", ->
 
   # Canonical SectionHeader is "-- Section --".
   it "parses SectionHeader", ->
-    assert.parse "-- Section --",   sectionBlueprint name: "Section"
-    assert.parse "--\nSection\n--", sectionBlueprint name: "Section"
+    assert.parse """
+      --- API ---
+
+      -- Section --
+    """, sectionBlueprint name: "Section"
+
+    assert.parse """
+      --- API ---
+
+      --\nSection\n--
+    """, sectionBlueprint name: "Section"
 
   # Canonical SectionHeaderShort is "-- Section --".
   it "parses SectionHeaderShort", ->
-    assert.parse "-- abcd",      sectionBlueprint name: "abcd"
-    assert.parse "--   abcd",    sectionBlueprint name: "abcd"
-    assert.parse "-- abcd --",   sectionBlueprint name: "abcd"
-    assert.parse "-- abcd   --", sectionBlueprint name: "abcd"
+    assert.parse """
+      --- API ---
+
+      -- abcd
+    """, sectionBlueprint name: "abcd"
+
+    assert.parse """
+      --- API ---
+
+      --   abcd
+    """, sectionBlueprint name: "abcd"
+
+    assert.parse """
+      --- API ---
+
+      -- abcd --
+    """, sectionBlueprint name: "abcd"
+
+    assert.parse """
+      --- API ---
+
+      -- abcd   --
+    """, sectionBlueprint name: "abcd"
 
   # Canonical SectionHeaderLong is:
   #
@@ -347,27 +444,37 @@ describe "Apiary blueprint parser", ->
   #
   it "parses SectionHeaderLong", ->
     assert.parse """
+      --- API ---
+
       --
       --
     """, sectionBlueprint name: null, description: null
 
     assert.parse """
+      --- API ---
+
       -- 
       --
     """, sectionBlueprint name: null, description: null
 
     assert.parse """
+      --- API ---
+
       --   
       --
     """, sectionBlueprint name: null, description: null
 
     assert.parse """
+      --- API ---
+
       --
       abcd
       --
     """, sectionBlueprint name: "abcd", description: null
 
     assert.parse """
+      --- API ---
+
       --
       abcd
       efgh
@@ -376,20 +483,36 @@ describe "Apiary blueprint parser", ->
     """, sectionBlueprint name: "abcd", description: "efgh\nijkl"
 
     assert.parse """
+      --- API ---
+
       --
       -- 
     """, sectionBlueprint name: null, description: null
 
     assert.parse """
+      --- API ---
+
       --
       --   
     """, sectionBlueprint name: null, description: null
 
   # Canonical SectionHeaderLongLine is "abcd".
   it "parses SectionHeaderLongLine", ->
-    assert.parse "--\nabcd\n--", sectionBlueprint name: "abcd"
+    assert.parse """
+      --- API ---
 
-    assert.notParse "--\n--\n--"
+      --
+      abcd
+      --
+    """, sectionBlueprint name: "abcd"
+
+    assert.notParse """
+      --- API ---
+
+      --
+      --
+      --
+    """
 
   # Canonical Resources is:
   #
@@ -401,7 +524,11 @@ describe "Apiary blueprint parser", ->
   #
   it "parses Resources", ->
     blueprint0 = new Blueprint
-    blueprint1 = sectionBlueprint resources: [new Resource url: "/one"]
+      name: "API"
+
+    blueprint1 = sectionBlueprint
+      resources: [new Resource url: "/one"]
+
     blueprint3 = sectionBlueprint
       resources: [
         new Resource url: "/one"
@@ -409,10 +536,21 @@ describe "Apiary blueprint parser", ->
         new Resource url: "/three"
       ]
 
-    assert.parse "",                blueprint0
-    assert.parse "GET /one\n< 200", blueprint1
+    assert.parse """
+      --- API ---
+
+    """, blueprint0
 
     assert.parse """
+      --- API ---
+
+      GET /one
+      < 200
+    """, blueprint1
+
+    assert.parse """
+      --- API ---
+
       GET /one
       < 200
 
@@ -424,6 +562,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint3
 
     assert.parse """
+      --- API ---
+
       GET /one
       < 200
 
@@ -461,6 +601,8 @@ describe "Apiary blueprint parser", ->
     ]
 
     assert.parse """
+      --- API ---
+
       GET /
       > Content-Type: application/json
       { "status": "ok" }
@@ -478,6 +620,8 @@ describe "Apiary blueprint parser", ->
     """, resourceBlueprint request: request, responses: responses
 
     assert.parse """
+      --- API ---
+
       Root resource
       GET /
       > Content-Type: application/json
@@ -501,6 +645,8 @@ describe "Apiary blueprint parser", ->
     assert.parse """
       HOST: http://example.com
 
+      --- API ---
+
       GET url
       < 200
 
@@ -511,6 +657,7 @@ describe "Apiary blueprint parser", ->
       < 200
     """, new Blueprint
       location:    "http://example.com"
+      name:        "API"
       sections:    [
         new Section resources: [
           new Resource url: "url"
@@ -522,6 +669,8 @@ describe "Apiary blueprint parser", ->
     assert.parse """
       HOST: http://example.com/
 
+      --- API ---
+
       GET url
       < 200
 
@@ -532,6 +681,7 @@ describe "Apiary blueprint parser", ->
       < 200
     """, new Blueprint
       location:    "http://example.com/"
+      name:        "API"
       sections:    [
         new Section resources: [
           new Resource url: "url"
@@ -543,6 +693,8 @@ describe "Apiary blueprint parser", ->
     assert.parse """
       HOST: http://example.com/path
 
+      --- API ---
+
       GET url
       < 200
 
@@ -553,6 +705,7 @@ describe "Apiary blueprint parser", ->
       < 200
     """, new Blueprint
       location:    "http://example.com/path"
+      name:        "API"
       sections:    [
         new Section resources: [
           new Resource url: "/path/url"
@@ -564,6 +717,8 @@ describe "Apiary blueprint parser", ->
     assert.parse """
       HOST: http://example.com/path/
 
+      --- API ---
+
       GET url
       < 200
 
@@ -574,6 +729,7 @@ describe "Apiary blueprint parser", ->
       < 200
     """, new Blueprint
       location:    "http://example.com/path/"
+      name:        "API"
       sections:    [
         new Section resources: [
           new Resource url: "/path/url"
@@ -585,12 +741,16 @@ describe "Apiary blueprint parser", ->
   # Canonical ResourceDescription is "Root resource".
   it "parses ResourceDescription", ->
     assert.parse """
+      --- API ---
+
       abcd
       GET /
       < 200
     """, resourceBlueprint description: "abcd"
 
     assert.parse """
+      --- API ---
+
       abcd
       efgh
       ijkl
@@ -601,12 +761,16 @@ describe "Apiary blueprint parser", ->
   # Canonical ResourceDescriptionLine is "abcd".
   it "parses ResourceDescriptionLine", ->
     assert.parse """
+      --- API ---
+
       abcd
       GET /
       < 200
     """, resourceBlueprint description: "abcd"
 
     assert.notParse """
+      --- API ---
+
       GET
       GET /
       < 200
@@ -614,19 +778,95 @@ describe "Apiary blueprint parser", ->
 
   # Canonical HTTPMethod is "GET".
   it "parses HTTPMethod", ->
-    assert.parse "GET /\n< 200",       resourceBlueprint method: "GET"
-    assert.parse "POST /\n< 200",      resourceBlueprint method: "POST"
-    assert.parse "PUT /\n< 200",       resourceBlueprint method: "PUT"
-    assert.parse "DELETE /\n< 200",    resourceBlueprint method: "DELETE"
-    assert.parse "OPTIONS /\n< 200",   resourceBlueprint method: "OPTIONS"
-    assert.parse "PATCH /\n< 200",     resourceBlueprint method: "PATCH"
-    assert.parse "PROPPATCH /\n< 200", resourceBlueprint method: "PROPPATCH"
-    assert.parse "LOCK /\n< 200",      resourceBlueprint method: "LOCK"
-    assert.parse "UNLOCK /\n< 200",    resourceBlueprint method: "UNLOCK"
-    assert.parse "COPY /\n< 200",      resourceBlueprint method: "COPY"
-    assert.parse "MOVE /\n< 200",      resourceBlueprint method: "MOVE"
-    assert.parse "DELETE /\n< 200",    resourceBlueprint method: "DELETE"
-    assert.parse "MKCOL /\n< 200",     resourceBlueprint method: "MKCOL"
+    assert.parse """
+      --- API ---
+
+      GET /
+      < 200
+    """, resourceBlueprint method: "GET"
+
+    assert.parse """
+      --- API ---
+
+      POST /
+      < 200
+    """, resourceBlueprint method: "POST"
+
+    assert.parse """
+      --- API ---
+
+      PUT /
+      < 200
+    """, resourceBlueprint method: "PUT"
+
+    assert.parse """
+      --- API ---
+
+      DELETE /
+      < 200
+    """, resourceBlueprint method: "DELETE"
+
+    assert.parse """
+      --- API ---
+
+      OPTIONS /
+      < 200
+    """, resourceBlueprint method: "OPTIONS"
+
+    assert.parse """
+      --- API ---
+
+      PATCH /
+      < 200
+    """, resourceBlueprint method: "PATCH"
+
+    assert.parse """
+      --- API ---
+
+      PROPPATCH /
+      < 200
+    """, resourceBlueprint method: "PROPPATCH"
+    assert.parse """
+      --- API ---
+
+      LOCK /
+      < 200
+    """, resourceBlueprint method: "LOCK"
+
+    assert.parse """
+      --- API ---
+
+      UNLOCK /
+      < 200
+    """, resourceBlueprint method: "UNLOCK"
+
+    assert.parse """
+      --- API ---
+
+      COPY /
+      < 200
+    """, resourceBlueprint method: "COPY"
+
+    assert.parse """
+      --- API ---
+
+      MOVE /
+      < 200
+    """, resourceBlueprint method: "MOVE"
+
+    assert.parse """
+      --- API ---
+
+      DELETE /
+      < 200
+    """, resourceBlueprint method: "DELETE"
+
+    assert.parse """
+      --- API ---
+
+      MKCOL /
+      < 200
+    """, resourceBlueprint method: "MKCOL"
 
   # Canonical Request is:
   #
@@ -635,6 +875,8 @@ describe "Apiary blueprint parser", ->
   #
   it "parses Request", ->
     assert.parse """
+      --- API ---
+
       GET /
       > Content-Type: application/json
       < 200
@@ -644,6 +886,8 @@ describe "Apiary blueprint parser", ->
         body:    null
 
     assert.parse """
+      --- API ---
+
       GET /
       > Content-Type: application/json
       { "status": "ok" }
@@ -656,17 +900,23 @@ describe "Apiary blueprint parser", ->
   # Canonical RequestHeaders is " Content-Type: application/json".
   it "parses RequestHeaders", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
     """, requestBlueprint()
 
     assert.parse """
+      --- API ---
+
       GET /
       > Content-Type: application/json
       < 200
     """, requestBlueprint headers: { "Content-Type": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       > Content-Type: application/json
       > Content-Length: 153
@@ -681,6 +931,8 @@ describe "Apiary blueprint parser", ->
   # Canonical RequestHeader is "< Content-Type: application/json".
   it "parses RequestHeader", ->
     assert.parse """
+      --- API ---
+
       GET /
       > Content-Type: application/json
       < 200
@@ -714,6 +966,8 @@ describe "Apiary blueprint parser", ->
     ]
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
@@ -721,6 +975,8 @@ describe "Apiary blueprint parser", ->
     """, resourceBlueprint responses: responses[0..0]
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
@@ -732,6 +988,8 @@ describe "Apiary blueprint parser", ->
     """, resourceBlueprint responses: responses[0..1]
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
@@ -754,6 +1012,8 @@ describe "Apiary blueprint parser", ->
   #
   it "parses Response", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
@@ -766,6 +1026,8 @@ describe "Apiary blueprint parser", ->
       ]
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
@@ -780,24 +1042,47 @@ describe "Apiary blueprint parser", ->
 
   # Canonical ResponseStatus is "> 200".
   it "parses ResponseStatus", ->
-    assert.parse "GET /\n< 200",    resourceBlueprint()
-    assert.parse "GET /\n< 200 ",   resourceBlueprint()
-    assert.parse "GET /\n< 200   ", resourceBlueprint()
+    assert.parse """
+      --- API ---
+
+      GET /
+      < 200
+    """, resourceBlueprint()
+
+    assert.parse """
+      --- API ---
+
+      GET /
+      < 200 
+    """,   resourceBlueprint()
+
+    assert.parse """
+      --- API ---
+
+      GET /
+      < 200   
+    """, resourceBlueprint()
 
   # Canonical ResponseHeaders is " Content-Type: application/json".
   it "parses ResponseHeaders", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
     """, responseBlueprint()
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
     """, responseBlueprint headers: { "Content-Type": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
@@ -812,6 +1097,8 @@ describe "Apiary blueprint parser", ->
   # Canonical ResponseHeader is "< Content-Type: application/json".
   it "parses ResponseHeader", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
@@ -822,6 +1109,8 @@ describe "Apiary blueprint parser", ->
     blueprint = resourceBlueprint responses: [new Response, new Response]
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       +++++
@@ -829,6 +1118,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       +++++ 
@@ -836,6 +1127,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       +++++   
@@ -844,9 +1137,25 @@ describe "Apiary blueprint parser", ->
 
   # Canonical HttpStatus is "200".
   it "parses HttpStatus", ->
-    assert.parse "GET /\n< 0",   responseBlueprint status: 0
-    assert.parse "GET /\n< 9",   responseBlueprint status: 9
-    assert.parse "GET /\n< 123", responseBlueprint status: 123
+    assert.parse """
+      --- API ---
+
+      GET /
+      < 0
+    """, responseBlueprint status: 0
+
+    assert.parse """
+      --- API ---
+
+      GET /
+      < 9
+    """, responseBlueprint status: 9
+
+    assert.parse """
+      --- API ---
+      GET /
+      < 123
+    """, responseBlueprint status: 123
 
   # Canonical HttpHeader is "Content-Type: application/json".
   it "parses HttpHeader", ->
@@ -854,18 +1163,24 @@ describe "Apiary blueprint parser", ->
       headers: { "Content-Type": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type:application/json
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type:   application/json
@@ -874,30 +1189,40 @@ describe "Apiary blueprint parser", ->
   # Canonical HttpHeaderName is "Content-Type".
   it "parses HttpHeaderName", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < !: application/json
     """, responseBlueprint headers: { "!": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < 9: application/json
     """, responseBlueprint headers: { "9": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < ;: application/json
     """, responseBlueprint headers: { ";": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < ~: application/json
     """, responseBlueprint headers: { "~": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < abc: application/json
@@ -906,6 +1231,8 @@ describe "Apiary blueprint parser", ->
   # Canonical HttpHeaderValue is "application/json".
   it "parses HttpHeaderValue", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: abcd
@@ -914,11 +1241,16 @@ describe "Apiary blueprint parser", ->
   # Canonical JsonSchemaValidations is "-- JSON Schema Validations --"
   it "parses JSONSchemaValidations", ->
     blueprint0 = new Blueprint
+      name: "API"
+
     blueprint1 = new Blueprint
+      name:        "API"
       validations: [
         new JsonSchemaValidation url: "/one", body: "{ \"type\": \"object\" }"
       ]
+
     blueprint3 = new Blueprint
+      name:        "API"
       validations: [
         new JsonSchemaValidation url: "/one",   body: "{ \"type\": \"object\" }"
         new JsonSchemaValidation url: "/two",   body: "{ \"type\": \"object\" }"
@@ -926,17 +1258,23 @@ describe "Apiary blueprint parser", ->
       ]
 
     assert.parse """
+      --- API ---
+
       -- JSON Schema Validations --
 
     """, blueprint0
 
     assert.parse """
+      --- API ---
+
       -- JSON Schema Validations --
       GET /one
       { "type": "object" }
     """, blueprint1
 
     assert.parse """
+      --- API ---
+
       -- JSON Schema Validations --
       GET /one
       { "type": "object" }
@@ -949,6 +1287,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint3
 
     assert.parse """
+      --- API ---
+
       -- JSON Schema Validations --
       GET /one
       { "type": "object" }
@@ -971,22 +1311,38 @@ describe "Apiary blueprint parser", ->
   #
   it "parses JSONSchemaValidation", ->
     assert.parse """
+      --- API ---
+
       -- JSON Schema Validations --
       GET /
       { "type": "object" }
     """, new Blueprint
+      name:        "API"
       validations: [new JsonSchemaValidation body: "{ \"type\": \"object\" }"]
 
   # Canonical Signature is "GET /".
   it "parses Signature", ->
-    assert.parse "GET abcd\n< 200",   resourceBlueprint url: "abcd"
-    assert.parse "GET   abcd\n< 200", resourceBlueprint url: "abcd"
+    assert.parse """
+      --- API ---
+
+      GET abcd
+      < 200
+    """, resourceBlueprint url: "abcd"
+
+    assert.parse """
+      --- API ---
+
+      GET   abcd
+      < 200
+    """, resourceBlueprint url: "abcd"
 
   # Canonical Body is "{ \"status\": \"ok\" }".
   it "parses Body", ->
     blueprint = responseBlueprint body: "{ \"status\": \"ok\" }"
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -995,6 +1351,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<EOT
@@ -1003,6 +1361,8 @@ describe "Apiary blueprint parser", ->
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       { \"status\": \"ok\" }
@@ -1016,6 +1376,8 @@ describe "Apiary blueprint parser", ->
   #
   it "parses DelimitedBodyFixed", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -1023,6 +1385,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: null
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<< 
@@ -1030,6 +1394,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: null
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<   
@@ -1037,6 +1403,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: null
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -1045,6 +1413,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: "abcd"
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -1055,6 +1425,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: "abcd\nefgh\nijkl"
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -1062,6 +1434,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: null
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -1071,6 +1445,8 @@ describe "Apiary blueprint parser", ->
   # Canonical DelimitedBodyFixedLine is "abcd".
   it "parses DelimitedBodyFixedLine", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -1086,6 +1462,8 @@ describe "Apiary blueprint parser", ->
   #
   it "parses DelimitedBodyVariable", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<EOT
@@ -1093,6 +1471,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: null
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<EOT
@@ -1101,6 +1481,8 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: "abcd"
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<EOT
@@ -1113,6 +1495,8 @@ describe "Apiary blueprint parser", ->
   # Canonical DelimitedBodyVariableLine is "abcd".
   it "parses DelimitedBodyVariableLine", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<EOT
@@ -1123,6 +1507,8 @@ describe "Apiary blueprint parser", ->
   # Canonical DelimitedBodyVariableTerminator is "EOT".
   it "parses DelimitedBodyVariableTerminator", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <<<abcd
@@ -1132,6 +1518,8 @@ describe "Apiary blueprint parser", ->
   # Canonical SimpleBody is "{ \"status\": \"ok\" }".
   it "parses SimpleBody", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       abcd
@@ -1140,12 +1528,16 @@ describe "Apiary blueprint parser", ->
     """, responseBlueprint body: "abcd\nefgh\nijkl"
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       abcd
     """, responseBlueprint body: "abcd"
 
     assert.notParse """
+      --- API ---
+
       GET /
       < 200
       <<<
@@ -1154,6 +1546,8 @@ describe "Apiary blueprint parser", ->
   # Canonical SimpleBodyLine is "abcd".
   it "parses SimpleBodyLine", ->
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       abcd
@@ -1170,12 +1564,16 @@ describe "Apiary blueprint parser", ->
       headers: { "Content-Type": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       > Content-Type: application/json
       < 200
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       >   Content-Type: application/json
       < 200
@@ -1187,12 +1585,16 @@ describe "Apiary blueprint parser", ->
       headers: { "Content-Type": "application/json" }
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       < Content-Type: application/json
     """, blueprint
 
     assert.parse """
+      --- API ---
+
       GET /
       < 200
       <   Content-Type: application/json
@@ -1200,9 +1602,35 @@ describe "Apiary blueprint parser", ->
 
   # Canonical Text0 is "abcd".
   it "parses Text0", ->
-    assert.parse "---\n\n---",    new Blueprint description: null
-    assert.parse "---\na\n---",   new Blueprint description: "a"
-    assert.parse "---\nabc\n---", new Blueprint description: "abc"
+    assert.parse """
+      --- API ---
+
+      ---
+
+      ---
+    """, new Blueprint
+      name:       "API"
+      description: null
+
+    assert.parse """
+      --- API ---
+
+      ---
+      a
+      ---
+    """, new Blueprint
+      name:        "API"
+      description: "a"
+
+    assert.parse """
+      --- API ---
+
+      ---
+      abc
+      ---
+    """, new Blueprint
+      name:        "API"
+      description: "abc"
 
   # Canonical Text1 is "abcd".
   it "parses Text1", ->

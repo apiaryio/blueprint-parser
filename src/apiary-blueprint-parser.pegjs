@@ -55,7 +55,7 @@ API
   = EmptyLine*
     location:Location?
     EmptyLine*
-    name:APIName?
+    name:APIName
     EmptyLine*
     description:APIDescription?
     EmptyLine*

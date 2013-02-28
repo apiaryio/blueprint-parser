@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+# A simple script that can upload a parser browser build to Amazon S3.
+
+require "rubygems"
+require "aws-sdk"
+
+abort "Usage: #$0 <browser-build-file>" if ARGV.size != 1
+
+file   = ARGV[0]
+key    = "blueprint-parser/#{File.basename(file)}"
+config = YAML.load_file(File.dirname(__FILE__) + "/config.yml")
+
+s3 = AWS::S3.new(
+  :access_key_id     => config["access_key_id"],
+  :secret_access_key => config["secret_access_key"]
+)
+
+bucket = s3.buckets["apiary-public"]
+object = bucket.objects[key]
+object.write(
+  :file           => file,
+  :content_length => File.size(file),
+  :content_type   => "text/javascript"
+)
+
+object.acl = {
+  :grant_full_control => "emailAddress=\"lukas@apiary.io\"",
+  :grant_read         => "uri=\"http://acs.amazonaws.com/groups/global/AllUsers\"",
+}
+
+bucket.objects.each do |object|
+  puts object.public_url
+end

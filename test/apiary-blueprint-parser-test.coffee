@@ -857,16 +857,16 @@ describe "Apiary blueprint parser", ->
     assert.parse """
       --- API ---
 
-      DELETE /
+      MKCOL /
       < 200
-    """, resourceBlueprint method: "DELETE"
+    """, resourceBlueprint method: "MKCOL"
 
     assert.parse """
       --- API ---
 
-      MKCOL /
+      HEAD /
       < 200
-    """, resourceBlueprint method: "MKCOL"
+    """, resourceBlueprint method: "HEAD"
 
   # Canonical Request is:
   #

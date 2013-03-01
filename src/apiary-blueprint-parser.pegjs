@@ -199,8 +199,8 @@ HttpMethod
   / "UNLOCK"
   / "COPY"
   / "MOVE"
-  / "DELETE"
   / "MKCOL"
+  / "HEAD"
 
 Request
   = headers:RequestHeaders body:Body? {

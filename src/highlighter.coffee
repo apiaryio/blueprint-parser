@@ -10,7 +10,7 @@ if window?
 
 verbose = false
 
-httpMethods = 'GET|POST|PUT|DELETE|OPTIONS|PATCH|PROPPATCH|LOCK|UNLOCK|COPY|MOVE|MKCOL' # assembled from RFC 2616, 5323, 5789
+httpMethods = 'GET|POST|PUT|DELETE|OPTIONS|PATCH|PROPPATCH|LOCK|UNLOCK|COPY|MOVE|MKCOL|HEAD' # assembled from RFC 2616, 5323, 5789
 httpRequestRe = new RegExp "^(#{httpMethods})\\s+(.*?)\\s*$"
 aceRules = (json,xml) -> ->
   @$rules =
@@ -61,7 +61,6 @@ aceRules = (json,xml) -> ->
     token: ['comment']
     regex: '^.*$'
   ]
-  
   "introStart": [
     token: 'separator'
     regex: '^---\s*$'

@@ -18,6 +18,10 @@
     "lib/ast.js"
   ],
   "main":            "lib/apiary-blueprint-parser",
+  "scripts": {
+    "pretest": "make",
+    "test": "make test"
+  },
   "devDependencies": {
     "coffee-script": "= 1.4.0",
     "pegjs":         "git://github.com/dmajda/pegjs.git#02af83f9b416778878e52e2cbbc22d96e312164e",

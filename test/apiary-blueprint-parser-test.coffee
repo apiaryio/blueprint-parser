@@ -868,6 +868,14 @@ describe "Apiary blueprint parser", ->
       < 200
     """, resourceBlueprint method: "HEAD"
 
+    assert.notParse """
+      --- API ---
+
+      HEAD /
+      < 200
+      Hello World
+    """
+
   # Canonical Request is:
   #
   #   > Content-Type: application/json

@@ -167,6 +167,14 @@ Resource
     request:Request
     responses:Responses
     {
+      /* For the "HEAD" method every response body must be empty */
+      if (signature.method === "HEAD") {
+        for (var i = 0; i < responses.length; i++) {
+          if (responses[i].body !== null)
+            return null; /* Error, body must be null */
+        };
+      }
+
       var url = urlPrefix !== ""
         ? "/" + urlPrefix.replace(/\/$/, "") + "/" + signature.url.replace(/^\//, "")
         : signature.url;

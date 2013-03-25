@@ -130,7 +130,7 @@ SectionHeader
   / SectionHeaderShort
 
 SectionHeaderShort
-  = !JsonSchemaValidations "--" S+ name:Text1 EOLF {
+  = !JsonSchemaValidationsHeader "--" S+ name:Text1 EOLF {
       return {
         name:        name.replace(/\s+--$/, ""),
         description: ""
@@ -138,7 +138,7 @@ SectionHeaderShort
     }
 
 SectionHeaderLong
-  = !JsonSchemaValidations "--" S* EOL lines:SectionHeaderLongLine* "--" S* EOLF {
+  = !JsonSchemaValidationsHeader "--" S* EOL lines:SectionHeaderLongLine* "--" S* EOLF {
     return {
       name:        lines.length > 0 ? lines[0] : "",
       description: lines.slice(1).join("\n")
@@ -161,7 +161,7 @@ Resource
    * sectionless resources (which are placed before resources in sections and
    * validations) terminates correctly.
    */
-  = !Section !JsonSchemaValidations
+  = !SectionHeader !JsonSchemaValidationsHeader
     description:ResourceDescription?
     signature:Signature
     request:Request
@@ -274,9 +274,11 @@ HttpHeaderName "HTTP header name"
 HttpHeaderValue "HTTP header value"
   = Text0
 
+JsonSchemaValidationsHeader
+  = "-- JSON Schema Validations --" EOLF
+
 JsonSchemaValidations
-  = "-- JSON Schema Validations --"
-    EOLF
+  = JsonSchemaValidationsHeader
     head:JsonSchemaValidation?
     tail:(EmptyLine* validation:JsonSchemaValidation { return validation; })*
     {

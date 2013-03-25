@@ -57,6 +57,17 @@ requestBlueprint = (props = {}) ->
 responseBlueprint = (props = {}) ->
   resourceBlueprint responses: [new Response(props)]
 
+# Create blueprint with default name and empty sections
+# named S1 to S<count>.
+multipleSectionsBlueprint = (count) ->
+  sections = [];
+  for i in [1..count] by 1
+    sections.push new Section name: "S#{i}"
+
+  new Blueprint
+    name:     "API"
+    sections: sections
+
 describe "Apiary blueprint parser", ->
   # ===== Rule Tests =====
 
@@ -513,6 +524,56 @@ describe "Apiary blueprint parser", ->
       --
       --
     """
+    
+  it "parses many empty sections without timeout", ->
+    # Since parser is blocking result to comparing timestamps
+    parseTimestamp = Date.now()
+    assert.parse """
+--- API ---
+
+-- S1 --
+
+-- S2 --
+
+-- S3 --
+
+-- S4 --
+
+-- S5 --
+
+-- S6 --
+
+-- S7 --
+
+-- S8 --
+
+-- S9 --
+
+-- S10 --
+
+-- S11 --
+
+-- S12 --
+
+-- S13 --
+
+-- S14 --
+
+-- S15 --
+
+-- S16 --
+
+-- S17 --
+
+-- S18 --
+
+-- S19 --
+
+-- S20 --
+
+    """, multipleSectionsBlueprint 20
+    
+    assert Date.now() - parseTimestamp < 2000, "parsing not under 2000ms"
 
   # Canonical Resources is:
   #

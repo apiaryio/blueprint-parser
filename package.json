@@ -22,6 +22,12 @@
     "pretest": "make",
     "test": "make test"
   },
+  "bin": {
+    "blueprint-parser": "bin/blueprint-parser"
+  },
+  "dependencies": {
+    "commander": "2.0.0"
+  },
   "devDependencies": {
     "coffee-script": "= 1.4.0",
     "pegjs":         "git://github.com/dmajda/pegjs.git#02af83f9b416778878e52e2cbbc22d96e312164e",

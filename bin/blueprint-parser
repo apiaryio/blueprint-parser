@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+var cmd = require('commander');
+var fs = require('fs');
+
+
+
+cmd.version('0.0.1');
+
+cmd.on('--help', function(){
+  console.log('  Examples:');
+  console.log('');
+  console.log('    $ blueprint-parser path/to/example.apib');
+  console.log('');
+});
+
+cmd.parse(process.argv);
+
+if (!cmd.args.length) cmd.help();
+
+var parser = require('../lib/apiary-blueprint-parser');
+
+
+
+process.stdin.setEncoding('utf8');
+
+parsed = fs.readFile(process.argv[2], 'utf8', function (err,string) {
+  try {
+    output = parser.parse(string);
+    parsed = true;
+  } catch (e) {
+    parsed = false;
+  }
+  console.log(output);
+});
+

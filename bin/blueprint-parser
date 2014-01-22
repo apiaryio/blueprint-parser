@@ -2,14 +2,8 @@
 var cmd = require('commander');
 var fs = require('fs');
 
-cmd.version('0.0.1');
-
-cmd.on('--help', function(){
-  console.log('  Examples:');
-  console.log('');
-  console.log('    $ blueprint-parser path/to/example.apib');
-  console.log('');
-});
+cmd.version('0.0.1')
+   .usage('[file]');
 
 cmd.parse(process.argv);
 
@@ -22,9 +16,8 @@ process.stdin.setEncoding('utf8');
 parsed = fs.readFile(process.argv[2], 'utf8', function (err,string) {
   try {
     output = parser.parse(string);
-    parsed = true;
+    console.log(JSON.stringify(output, "", 2));
   } catch (e) {
-    parsed = false;
+    console.error(e.name + ' on line ' + e.line + ': ' + e.message);
   }
-  console.log(JSON.stringify(output, "", 2));
 });

@@ -2,5 +2,6 @@ lib/*
 dist/*
 node_modules/*
 tools/upload-browser-build/config.yml
+npm-debug.log
 *.sublime-project
 *.sublime-workspace

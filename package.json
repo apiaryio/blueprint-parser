@@ -1,6 +1,6 @@
 {
   "name":            "apiary-blueprint-parser",
-  "version":         "0.5.0",
+  "version":         "0.5.3",
   "description":     "Apiary blueprint parser",
   "homepage":        "https://github.com/apiaryio/blueprint-parser",
   "author":          {
@@ -15,7 +15,8 @@
     "VERSION",
     "examples/example.apib",
     "lib/apiary-blueprint-parser.js",
-    "lib/ast.js"
+    "lib/ast.js",
+    "bin/blueprint-parser"
   ],
   "main":            "lib/apiary-blueprint-parser",
   "scripts": {

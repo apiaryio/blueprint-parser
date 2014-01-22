@@ -1,9 +1,6 @@
 #!/usr/bin/env node
-
 var cmd = require('commander');
 var fs = require('fs');
-
-
 
 cmd.version('0.0.1');
 
@@ -20,8 +17,6 @@ if (!cmd.args.length) cmd.help();
 
 var parser = require('../lib/apiary-blueprint-parser');
 
-
-
 process.stdin.setEncoding('utf8');
 
 parsed = fs.readFile(process.argv[2], 'utf8', function (err,string) {
@@ -31,6 +26,5 @@ parsed = fs.readFile(process.argv[2], 'utf8', function (err,string) {
   } catch (e) {
     parsed = false;
   }
-  console.log(output);
+  console.log(JSON.stringify(output, "", 2));
 });
-

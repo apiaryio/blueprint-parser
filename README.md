@@ -20,7 +20,7 @@ Do not install the parser globally (using the `-g` option), otherwise you won’
 
 ### Browser
 
-Download the [latest browser version of the parser](https://apiary-public.s3.amazonaws.com/blueprint-parser/apiary-blueprint-parser-0.5.3.js).
+Download the [latest browser version of the parser](https://github.com/apiaryio/blueprint-parser/releases/download/v0.5.3/apiary-blueprint-parser-0.5.3.js).
 
 Usage
 -----
